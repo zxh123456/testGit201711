@@ -5,19 +5,7 @@ define([ //
         "dojo/keys", //
         "dojo/dom-class", //
         "athena/dojo/templateAction/Base", //
-        "athena/dojo/templateAction/Commonx", //
-        "dojox/uuid/Uuid", //
-        "dojox/uuid/generateTimeBasedUuid", //
-        "athena/dojo/templateAction/TAVertical", //
-        "athena/dojo/templateAction/TATree", //
-        "dojo/_base/xhr", //
-        "dojo/json", //
-        "athena/dojo/data/util/transaction", //
-        "athena/gridx/Grid", //
-        "dojo/store/Memory",
-        "dojo/io/iframe",
-        "athena/dijit/ZTree",
-        "athena/business/lar/Base"
+
     ], //
     function(lang, domConstruct, array, keys, domClass, tpa, common, uuid, generateTimeBasedUuid, TAVertical, TATree, xhr, json, transaction, Grid, Memory, ioIframe, ZTree, base) {
         //注册Internal

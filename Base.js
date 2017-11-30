@@ -1,16 +1,7 @@
 define(["dojo/_base/lang",
 		"dojo/dom-construct",
 		"dojo/_base/array",
-		"dojo/dom-class",
-		"dojo/keys",
-		"athena/dojo/templateAction/Base",
-		"athena/dojo/templateAction/Commonx",
-		"dojox/uuid/Uuid",
-		"dojox/uuid/generateTimeBasedUuid",
-		"dojo/_base/xhr",
-		"dojo/io/iframe",
-		"athena/dijit/ZTree",
-		"athena/dojo/templateAction/TAZTree", //
+		
 ],function(lang, domConstruct, array, domClass, keys, tpa, common, uuid, generateTimeBasedUuid, xhr, ioIframe, ZTree,TAZTree) {
 	// 注册dojo.tpa.lar.base
 	var base = tpa.register('lar.base');
