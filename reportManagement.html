@@ -1,0 +1,416 @@
+<config>
+{
+	require:[
+		"athena.dijit.Toolbar",
+		"dijit.form.Button",
+		"dijit.layout.TabContainer",
+		"athena.dijit.form.Form",
+		"athena.dijit.form.FormatLabel",
+		"athena.dijit.form.DateTextBox",
+		"athena.dijit.form.Textarea",
+		"dijit.form.FilteringSelect",
+		"dijit.layout.ContentPane",
+		"dojox.layout.TableContainer",
+		"athena.dojo.store.JsonRest",
+		"athena.dojo.data.ObjectStore",
+		"dojo.data.ObjectStore",
+		"athena.dijit.layout.BorderContainer",
+		"athena.dijit.layout.TabController",
+		"athena.dijit.InlineEditBox",
+		"athena.dijit.GridController",
+		"athena.dijit.layout.SearchPanel",
+		"dijit.form.ValidationTextBox",
+		"athena.dojo.data.ItemFileWriteStore",
+		"athena.dijit.tree.CheckBoxStoreModel",
+		"athena.dijit.Tree",
+		"dijit.tree.ForestStoreModel",
+		"athena.dojo.templateAction.TAVertical",
+		"athena.dojo.templateAction.Formatter",
+		"athena.dojo.templateAction.Base",
+		"athena.dojo.templateAction.Common",
+		"athena.dojo.templateAction.TATree",
+		"athena.business.lar.ReportManagement",
+		"athena.dijit.layout.AnimateStackContainer",
+		"dojox.form.uploader.FileList",
+	    "dojox.form.Uploader",
+	    "dijit.ProgressBar",
+	    "athena.dojo.templateAction.Store",
+	    "athena.business.lar.Store",
+	    "dijit.layout.StackContainer",
+	    "dijit.Toolbar",
+		"dijit.Menu"
+	],
+	angular:true,
+	event:{
+		onLoad : "dojo.tpa.lar.reportManagement.onLoad"
+	}
+}
+</config>
+
+<!-- tab panel的最外层嵌套 -->
+<div id="${id}-border" style="width: 100%;height: 100%;" class="AtaTAVertical"
+data-dojo-type="athena.dijit.layout.BorderContainer"
+data-dojo-props="gutters:false,liveSplitters:false" module="lar">
+	<!-- begin 定义数据  begin -->
+	<!-- 承压参数列表 -->
+	<div data-dojo-id="${id}.TreeStore"
+	data-dojo-type="athena.dojo.data.ItemFileWriteStore"
+	data-dojo-props=" url: '../rest/lar/itr'"></div>
+	<div data-dojo-id="${id}.TreeModel"
+	data-dojo-type="athena.dijit.tree.CheckBoxStoreModel"
+	data-dojo-props=" store: ${id}.TreeStore, query: {type: 'root'},checkboxRoot: true"></div>
+	<div data-dojo-id="${id}.indexStore" data-dojo-type="dojo.data.ObjectStore"></div>
+	<!-- end 定义数据   end -->
+	<!-- begin 工具栏   begin -->
+	<div data-dojo-type="dijit.Toolbar"
+	data-dojo-props="region:'top',splitter:false">
+		<div id="${id}-tree_Refresh" data-dojo-type="dijit.form.Button"
+		data-dojo-props="iconClass:'dijitIconRefresh', treeName:'Tree', onClick:dojo.tpa.lar.reportManagement.tree_Refresh">
+			刷新
+		</div>
+		<div id="${id}-expendAll_btn" data-dojo-type="dijit.form.Button"
+		data-dojo-props="iconClass:'dijitIconExpand', treeName:'Tree', showLabel:true,onClick:dojo.tpa.lar.reportManagement.expendTreeNode">
+			全部展开
+		</div>
+		<div id="${id}-collapseAll_btn" data-dojo-type="dijit.form.Button"
+		data-dojo-props="iconClass:'dijitIconShrink', treeName:'Tree', showLabel:true,onClick:dojo.tpa.lar.reportManagement.collapseTreeNode">
+			全部折叠
+		</div>
+		<div id="${id}-save_btn"  data-dojo-type="dijit.form.Button"
+		data-dojo-props="iconClass:'dijitIconAdd',showLabel:true,onClick:dojo.tpa.lar.reportManagement.add_btn">
+			新增
+		</div>
+		<div id="${id}-edit_btn"  data-dojo-type="dijit.form.Button"
+		data-dojo-props="iconClass:'dijitIconEdit',showLabel:true,onClick:dojo.tpa.lar.reportManagement.edit">
+			修改
+		</div>
+		<div id="${id}-delete_btn"  data-dojo-type="dijit.form.Button"
+		data-dojo-props="iconClass:'dijitIconDelete',showLabel:true,onClick:dojo.tpa.lar.reportManagement.deleteNode">
+			删除
+		</div>
+	</div>
+	<!-- end 工具栏   end -->
+	<div class="lar" style="height:100%;">
+		<div id="${id}-containerWrap" style="height: 100%;margin-top: 35px;" class="lar_containerWrap">
+			<!-- begin 主体Grid begin -->
+			<div data-dojo-type="dijit.layout.ContentPane"
+			data-dojo-props="region:'center','class':'AtaTACommonContentPane',minSize:100,controlBar:'v'">
+		    	<div id="${id}-menuTree"></div>
+			</div>
+			<!-- end 主体Grid end -->
+			<!-- begin 面板集合   begin -->
+			<div id="${id}-PanelSet"
+			data-dojo-type="dijit.layout.StackContainer" style="width: 73%;"
+			data-dojo-props="region:'right',splitter:true">
+				<!-- begin 空面板   begin -->
+				<div id="${id}-EmptyPanel" data-dojo-type="dijit.layout.ContentPane"
+					 data-dojo-props="">
+					<div class="lar_searchPanel" id="${id}-reportMan_searchPanel">
+							<form id="${id}-reportMan_search_Form">
+								<div class="searchBox">
+									<ul  class="searchLine searchUl">
+										<li>
+											<input type="text" name="reportManSearch" style="display: none;" autocomplete="off">
+											<input type="text" placeholder="关键词" id="${id}-reportManSearch" class="normalInput" autocomplete="off">
+										</li>
+										<li>
+											<input type="text" placeholder="报送对象" id="${id}-reportManObj" class="normalInput">
+										</li>
+										<li>
+											<input type="text" placeholder="报送部门" id="${id}-reportManUnitSearch" class="normalInput">
+										</li>
+										<li>
+											<div data-dojo-type="athena.dijit.form.DateTextBox" id="${id}-startDate"
+												data-dojo-props="hasDownArrow:false,displayedValue:'起始日期',
+												name:'begin_date',constraints:{max:new Date()},
+												style:'width:100px;height:30px;margin-left:5px;margin-right: 4px;'"></div>
+											<div dojoType="dijit.Tooltip" connectId="${id}-startDate" position="above">  
+											   	  请选择文档发布起始日期
+											</div>
+										</li>
+										<li>
+											<div data-dojo-type="athena.dijit.form.DateTextBox" id="${id}-endDate"
+												data-dojo-props="hasDownArrow:false,displayedValue:'截止日期',
+												name:'end_date',constraints:{max:new Date()},
+												style:'width:100px;height:30px;'"></div>
+											<div dojoType="dijit.Tooltip" connectId="${id}-endDate" position="above">  
+											   	  请选择文档发布截止日期
+											</div> 
+										</li>
+										<li>
+											<button id="${id}-reportManSearchBtn" class="relBtn externalSearchBtn">搜索</button>
+										</li>
+										<li>
+											<button id="${id}-searchRestBtn" class="relBtn searchRestBtn">重置</button>
+										</li>
+									</ul>
+									<ul class="searchUl">
+										<li name="fieldLabel" id="${id}-fieldLabel" class="fieldLabel">搜索域
+											<div dojoType="dijit.Tooltip" connectId="${id}-fieldLabel" position="above">  
+											 	点击全选 【设置关键词的搜索域】
+											</div>  
+										</li>
+										<li><label><input type="checkbox" name="field" value="title" id="${id}-reportMan_title" checked><span>标题</span></label></li>
+										<li><label><input type="checkbox" name="field" value="content" id="${id}-reportMan_content" checked><span>正文</span></label></li>
+										<!-- <li><label><input type="checkbox" name="field" value="foreignNewspaper" id="${id}-reportMan_fnp" checked><span>外报</span></label></li> -->
+									</ul>
+								</div>
+							</form>
+					</div>
+	
+					<div id="${id}-ListPanel" class="wordListBox">
+							<div class="boxListTitle">
+								<h2 id="${id}-reportManagementListTitle"></h2>
+								<div id="${id}-reportManagementListCount" class="lar_listCount externalListCount"></div>
+							</div>
+							<div class="listContent">
+								<dl id="${id}-reportManagementMarkList" class="lar_markList externalMarkList">
+								</dl>
+								<div id="${id}-reportManagementListDes"></div>
+								<ul id="${id}-reportManagementFirstWordList" class="lar_firstWordList externalFirstWordList"></ul>
+							</div>
+						</div>
+				</div>
+				<!-- end 空面板   end -->
+				<!-- begin 详细面板   begin -->
+				<div id="${id}-DetailPanel"
+				data-dojo-type="dijit.layout.TabContainer"
+				data-dojo-props="'class':'AtaMiddleTabContainer'">
+					
+				</div>
+				<!-- end 详细面板   end -->
+				
+				<!-- begin 修改文档面板   begin -->
+				<div id="${id}-editUploadPanel"
+				data-dojo-type="dijit.layout.ContentPane"
+				data-dojo-props="'class':'AtaMiddleTabContainer'">
+					<form id="${id}-Edit_Word_Form" data-dojo-type="dijit.form.Form" data-dojo-props="customClass:'AtaTACommonTableContainer'">
+						<div id="${id}-editWord_btn_back" data-dojo-type="dijit.form.Button"
+					 data-dojo-props="iconClass:'dijitIconBack',
+						onClick:dojo.tpa.lar.reportManagement.returnBack">
+						返回
+					</div>
+					<div id="${id}-btn_editWord" data-dojo-type="dijit.form.Button"
+						data-dojo-props="iconClass:'dijitIconSave','class':'btn_right',
+						onClick:dojo.tpa.lar.reportManagement.modify_word">
+						保存
+					</div>
+					<div data-dojo-type="dojox.layout.TableContainer"
+					data-dojo-props="cols:1,customClass:'AtaTACommonTableContainer',valueWidth:0.8">
+						<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="required:true,colspan:1,title:'文档名称:',name:'word_name',trim:true,maxLength:64"></div>
+						<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="colspan:1,title:'文号:',name:'proof',trim:true,maxLength:64"></div>
+						<div  data-dojo-type="athena.dijit.form.DateTextBox" data-dojo-props="colspan:1,title:'报送时间:',name:'publish_date',trim:true,maxLength:64,constraints:{max:new Date()}"></div>
+						<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="colspan:1,title:'报送对象:',name:'business_name',trim:true,maxLength:64,disabled:true"></div>
+						<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="colspan:1,title:'所在行业:',name:'publisher',trim:true,maxLength:64,disabled:true"></div>
+						<div data-dojo-type="dijit.form.FilteringSelect" data-dojo-props="name:'is_abandon',label:'是否外报:',store:dojo.tpa.store.lar.report,disabled:true"></div>
+					</div>
+				</form>
+			</div>
+				<!-- end 修改文档面板   end -->
+			
+				<!-- begin 修改二级节点   begin -->
+				<div id="${id}-editBusinessName"
+				data-dojo-type="dijit.layout.ContentPane"
+				data-dojo-props="'class':'AtaMiddleTabContainer'">
+					<form id="${id}-Edit_BusinessName_Form" data-dojo-type="dijit.form.Form" data-dojo-props="customClass:'AtaTACommonTableContainer'">
+						<div id="${id}-edit_btn_back" data-dojo-type="dijit.form.Button"
+					 data-dojo-props="iconClass:'dijitIconBack',
+						onClick:dojo.tpa.lar.reportManagement.returnBack">
+						返回
+					</div>
+					<div id="${id}-btn_editBusinessName" data-dojo-type="dijit.form.Button"
+						data-dojo-props="iconClass:'dijitIconSave','class':'btn_right',
+						onClick:dojo.tpa.lar.reportManagement.editBusinessName">
+						保存
+					</div>
+						<div data-dojo-type="dojox.layout.TableContainer"
+						data-dojo-props="cols:1,customClass:'AtaTACommonTableContainer',valueWidth:0.8">
+							<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="required:true,colspan:1,title:'报送对象:',name:'business_name',trim:true,maxLength:64"></div>
+							</div>
+					</form>
+			</div>
+				<!-- end 修改二级节点   end -->
+			
+				<!-- begin 修改一级根节点   begin -->
+				<div id="${id}-editRootName"
+					data-dojo-type="dijit.layout.ContentPane"
+					data-dojo-props="'class':'AtaMiddleTabContainer'">
+						<form id="${id}-Edit_Root_Form" data-dojo-type="dijit.form.Form" data-dojo-props="customClass:'AtaTACommonTableContainer'">
+							<div id="${id}-edit_root_btn_back" data-dojo-type="dijit.form.Button"
+						 data-dojo-props="iconClass:'dijitIconBack',
+							onClick:dojo.tpa.lar.reportManagement.returnBack">
+							返回
+						</div>
+						<div id="${id}-btn_edit_root" data-dojo-type="dijit.form.Button"
+							data-dojo-props="iconClass:'dijitIconSave','class':'btn_right',
+							onClick:dojo.tpa.lar.reportManagement.editPublisher">
+							保存
+						</div>
+							<div data-dojo-type="dojox.layout.TableContainer"
+							data-dojo-props="cols:1,customClass:'AtaTACommonTableContainer',valueWidth:0.8">
+								<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="required:true,colspan:1,title:'报送部门:',name:'publisher',trim:true,maxLength:64"></div>
+								</div>
+						</form>
+				</div>
+				<!-- end 修改一级根节点   end -->
+			
+				<!-- begin 上传文档面板   begin -->
+				<div id="${id}-UploadPanel"
+					data-dojo-type="dijit.layout.ContentPane"
+					data-dojo-props="'class':'AtaMiddleTabContainer'">
+					<div id="${id}-AtaReportUpgradeForm" class="AtaReportUpgradeForm" ng-class="{dijitHidden: uploading}">
+			            <div id="${id}-upload_btn_back" data-dojo-type="dijit.form.Button"
+						 data-dojo-props="iconClass:'dijitIconBack',
+							onClick:dojo.tpa.lar.reportManagement.returnBack">
+							返回
+					</div>
+					<div id="${id}-btn_wordSave" data-dojo-type="dijit.form.Button"
+						data-dojo-props="iconClass:'dijitIconSave','class':'btn_right',
+						onClick:dojo.tpa.lar.reportManagement.wordSave">
+						保存
+					</div>
+			            <form id="${id}-previewForm" data-dojo-type="dijit.form.Form"
+			            data-dojo-props="method:'post',encType:'multipart/form-data'">
+			                <div id="${id}-fileList"
+			                data-dojo-type="dojox.form.uploader.FileList"
+			                data-dojo-props="uploaderId:'${id}-uploader',headerFilename:'文件名称',headerType:'文件类型'"></div>
+			                <input id="${id}-uploader" type="file"
+			                data-dojo-type="dojox.form.Uploader"
+			                data-dojo-props="name:'templateFile',multiple:false,type:'file',label:'选择上传文件'" />
+			            </form>
+			        </div>   
+					<form id="${id}-Add_Word_Form" data-dojo-type="dijit.form.Form" data-dojo-props="customClass:'AtaTACommonTableContainer'">
+						<div data-dojo-type="dojox.layout.TableContainer"
+							data-dojo-props="cols:1,customClass:'AtaTACommonTableContainer',valueWidth:0.8">
+							<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="colspan:1,title:'文号:',name:'proof',trim:true,maxLength:64"></div>
+							<div  data-dojo-type="athena.dijit.form.DateTextBox" data-dojo-props="colspan:1,title:'报送时间:',name:'publish_date',constraints:{max:new Date()}"></div>
+							<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="colspan:1,title:'报送对象:',name:'business_name',trim:true,maxLength:64,disabled:true"></div>
+							<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="colspan:1,title:'报送部门:',name:'publisher',trim:true,maxLength:64,disabled:true"></div>
+							<div  data-dojo-type="dijit.form.FilteringSelect" data-dojo-props="required:true,colspan:1,title:'是否外报:',name:'is_abandon',store:dojo.tpa.store.lar.report"></div>
+						</div>
+					</form>
+				</div>
+				<!-- end 上传文档面板   end -->
+				
+				<!-- begin 下载面板   begin -->
+				<div id="${id}-downloadPanel"
+				data-dojo-type="dijit.layout.ContentPane"
+				data-dojo-props="'class':'AtaMiddleTabContainer downloadWrap'">
+					<form id="${id}-WordInfo_Form" data-dojo-type="dijit.form.Form" data-dojo-props="customClass:'AtaTACommonTableContainer'">
+						<div id="${id}-download_btn_back" data-dojo-type="dijit.form.Button"
+						 data-dojo-props="iconClass:'dijitIconBack',
+							onClick:dojo.tpa.lar.reportManagement.returnBack">
+							返回
+						</div>
+						<div id="${id}-btn_Download" data-dojo-type="dijit.form.Button"
+							data-dojo-props="iconClass:'dijitIconDownload','class':'btn_right',
+							onClick:dojo.tpa.lar.reportManagement.download">
+							下载
+						</div>
+						<div data-dojo-type="dojox.layout.TableContainer"
+							data-dojo-props="cols:1,customClass:'AtaTACommonTableContainer',valueWidth:0.8">
+							<div data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="required:true,colspan:1,title:'文档名称:',name:'word_name',trim:true,maxLength:64,disabled:true"></div>
+							<div data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="colspan:1,title:'文号:',name:'proof',trim:true,maxLength:64,disabled:true"></div>
+							<div data-dojo-type="athena.dijit.form.DateTextBox" data-dojo-props="colspan:1,title:'报送时间:',name:'publish_date',trim:true,maxLength:64,disabled:true"></div>
+							<div data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="colspan:1,title:'报送对象:',name:'business_name',trim:true,maxLength:64,disabled:true"></div>
+							<div data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="colspan:1,title:'报送部门:',name:'publisher',trim:true,maxLength:64,disabled:true"></div>
+							<div data-dojo-type="dijit.form.FilteringSelect" data-dojo-props="colspan:1,title:'是否外报:',name:'is_abandon',store:dojo.tpa.store.lar.report,trim:true,maxLength:64,disabled:true"></div>
+						</div>
+					</form>
+					<div id="${id}-reportManagement_bookWrap" class="lar_bookWrap">
+						<div id="${id}-wordText"></div>
+					</div>
+					<!--begin  回到顶部btn begin-->
+					<div class="rightTip" id="${id}-rightTip">
+						<ul>
+							<li><a class="actGoTOrB fa-chevron-up"></a></li>
+						</ul>
+					</div>
+					<!--end  回到顶部btn end-->
+			</div>
+				<!-- end 下载面板   end -->
+				
+				<!-- begin 新增第二级 关键字 节点begin  -->
+				<div id="${id}-AddBusinessName"
+					data-dojo-type="dijit.layout.ContentPane"
+					data-dojo-props="'class':'AtaMiddleTabContainer'">
+						<div id="${id}-addSec_btn_back" data-dojo-type="dijit.form.Button"
+						 data-dojo-props="iconClass:'dijitIconBack',
+							onClick:dojo.tpa.lar.reportManagement.returnBack">
+							返回
+						</div>
+						<div id="${id}-btn_save_businessname" data-dojo-type="dijit.form.Button"
+							data-dojo-props="iconClass:'dijitIconSave','class':'AtaTACommonContentPane btn_right',
+							onClick:dojo.tpa.lar.reportManagement.saveBusinessName">
+							保存
+						</div>
+						<form id="${id}-add_businessName_Form" data-dojo-type="dijit.form.Form" data-dojo-props="customClass:'AtaTACommonTableContainer'">
+							<div data-dojo-type="dojox.layout.TableContainer"
+							data-dojo-props="cols:1,customClass:'AtaTACommonTableContainer',valueWidth:0.8">
+								<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="required:true,colspan:1,title:'报送对象:',name:'business_name',trim:true,maxLength:64"></div>
+								<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="colspan:1,title:'报送部门:',name:'parent_menu_name',trim:true,maxLength:64,disabled:true"></div>
+							</div>
+						</form>
+				</div>
+				<!-- end 新增第二级 关键字 节点  end -->
+			
+				<!-- begin 新增第一级 关键字 节点begin  -->
+				<div id="${id}-AddRootName"
+					data-dojo-type="dijit.layout.ContentPane"
+					data-dojo-props="'class':'AtaMiddleTabContainer'">
+						<div id="${id}-add_root_btn_back" data-dojo-type="dijit.form.Button"
+						 data-dojo-props="iconClass:'dijitIconBack',
+							onClick:dojo.tpa.lar.reportManagement.returnBack">
+							返回
+						</div>
+						<div id="${id}-btn_save_root" data-dojo-type="dijit.form.Button"
+							data-dojo-props="iconClass:'dijitIconSave','class':'AtaTACommonContentPane btn_right',
+							onClick:dojo.tpa.lar.reportManagement.savePublisher">
+							保存
+						</div>
+						<form id="${id}-add_root_Form" data-dojo-type="dijit.form.Form" data-dojo-props="customClass:'AtaTACommonTableContainer'">
+							<div data-dojo-type="dojox.layout.TableContainer"
+							data-dojo-props="cols:1,customClass:'AtaTACommonTableContainer',valueWidth:0.8">
+								<div  data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="required:true,colspan:1,title:'报送部门:',name:'publisher',trim:true,maxLength:64"></div>
+							</div>
+						</form>
+				</div>
+				<!-- end 新增第一级 关键字 节点  end -->
+				<!-- begin空面板begin -->
+				<div id="${id}-emptyArea" data-dojo-type="dijit.layout.ContentPane"
+					 data-dojo-props="">
+				</div>
+				<!-- end空面板end -->
+			</div>
+			<!-- end 面板集合   end -->
+		</div>
+	</div>
+</div>
+<!-- begin 配置右键点击菜单 begin -->
+<ul data-dojo-type="dijit.Menu" id="${id}-tree_menu" class="ztreeMenu">
+	<li id="${id}-tree_menu_add" data-dojo-type="dijit.MenuItem"
+	data-dojo-props="type:'add_root',accountGroup_special_flags:0,onClick:dojo.tpa.lar.reportManagement.add_publisher_btn">
+		新增报送部门
+	</li>
+	<li id="${id}-tree_menu_modify" data-dojo-type="dijit.MenuItem"
+	data-dojo-props="type:'modify_root',accountGroup_special_flags:0,onClick:dojo.tpa.lar.reportManagement.edit_publisher_btn">
+		修改报送部门
+	</li>
+	<li id="${id}-tree_menu_delete" data-dojo-type="dijit.MenuItem"
+	data-dojo-props="type:'delete_root',account_special_flags:0,onClick:dojo.tpa.lar.reportManagement.deleteRoot">
+		删除报送部门
+	</li>
+	<li id="${id}-tree_menu_add_businessname" data-dojo-type="dijit.MenuItem"
+	data-dojo-props="type:'add_businessname',accountGroup_special_flags:0,onClick:dojo.tpa.lar.reportManagement.add_businessname_btn">
+		新增报送对象
+	</li>
+	<li id="${id}-tree_menu_modify_businessname" data-dojo-type="dijit.MenuItem"
+	data-dojo-props="type:'modify_businessname',accountGroup_special_flags:0,onClick:dojo.tpa.lar.reportManagement.edit_businessname_btn">
+		修改报送对象
+	</li>
+	<li id="${id}-tree_menu_delete_businessname" data-dojo-type="dijit.MenuItem"
+	data-dojo-props="type:'delete_businessname',account_special_flags:0,onClick:dojo.tpa.lar.reportManagement.deleteRoot">
+		删除报送对象
+	</li>
+</ul>
+<!-- end 菜单 end -->
